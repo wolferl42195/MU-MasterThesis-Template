@@ -88,7 +88,61 @@
 %\renewcommand{\tocbibname}{\textsc{Bibliography}}
 
 % Biblatex
+\usepackage{csquotes}
+\usepackage{shortvrb}
+\usepackage{ifthen}
+\usepackage{color}
+\usepackage[retainmissing]{MnSymbol}
 \usepackage[style=apa]{biblatex}
+
+% Custom settings for misc entries in order to format the table for 6.13*
+% This table implies that the examples on each line are in a separate
+% document but since we are generating the citations from a real data
+% source, we have to prevent the usual uniquelist processing by making
+% all of the examples MISC entrytypes and changing uniquelist
+% per-type. There is no point in just typesetting static data as this
+% wouldn't be a test of anything.
+\ExecuteBibliographyOptions[misc]{uniquelist=false}
+\DeclareNameFormat[misc]{labelname}{%
+	\ifthenelse{\value{listcount}=1\OR\value{listtotal}=2}
+	{\usebibmacro{labelname:doname}
+		{\namepartfamily}
+		{\namepartfamilyi}
+		{\namepartgiven}
+		{\namepartgiveni}
+		{\namepartprefix}
+		{\namepartprefixi}
+		{\namepartsuffix}
+		{\namepartsuffixi}}
+	{\ifthenelse{\value{listtotal}>5}
+		{\ifnum\value{listcount}=2 \andothersdelim\bibstring{andothers}\fi
+			\ifnum\value{listcount}>2 \relax\fi}
+		{\ifciteseen
+			{\ifnum\value{listcount}=2 \andothersdelim\bibstring{andothers}\fi
+				\ifnum\value{listcount}=3 \relax\fi
+				\ifnum\value{listcount}=4 \relax\fi
+				\ifnum\value{listcount}=5 \relax\fi}
+			{\usebibmacro{labelname:doname}
+				{\namepartfamily}
+				{\namepartfamilyi}
+				{\namepartgiven}
+				{\namepartgiveni}
+				{\namepartprefix}
+				{\namepartprefixi}
+				{\namepartsuffix}
+				{\namepartsuffixi}}}}}
+\MakeShortVerb{\|}
+
+\newcommand\apa[2][]{\ifthenelse{\equal{#1}{}}%
+	{\textcolor{blue}{\texttt{(APA #2)}}}%
+	{\textcolor{blue}{\texttt{(APA #2 Example #1)}}}}
+
+% This just makes it easier to find a specific (APA 7.x) example in the
+% typeset references section
+\reversemarginpar
+\renewbibmacro*{begentry}{\marginpar{\footnotesize \textcolor{blue}{\thefield{entrykey}}}}
+
+
 
 % --- Start of Document ----------------------------------------
 \begin{document}
